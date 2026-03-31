@@ -21,6 +21,8 @@ dependencies = [
     "einops>=0.4.0",
     "huggingface_hub>=0.13.0",
     "requests>=2.20.0",
+    "flash-attn>=2.5.0",
+    "torchao>=0.17.0",
 ]
 
 [project.optional-dependencies]
@@ -44,12 +46,18 @@ dev = [
 
 [tool.uv.sources]
 torch = [
-    { index = "pytorch-cpu" },
+    { index = "pytorch-cu128" },
 ]
 
+[tool.uv.extra-build-dependencies]
+flash-attn = [{ requirement = "torch", match-runtime = true }]
+
+[tool.uv.extra-build-variables]
+flash-attn = { FLASH_ATTENTION_SKIP_CUDA_BUILD = "FALSE", MAX_JOBS = "2" }
+
 [[tool.uv.index]]
-name = "pytorch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
 [tool.ruff]

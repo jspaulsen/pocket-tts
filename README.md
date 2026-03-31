@@ -2,31 +2,29 @@
 
 <img width="1446" height="622" alt="pocket-tts-logo-v2-transparent" src="https://github.com/user-attachments/assets/637b5ed6-831f-4023-9b4c-741be21ab238" />
 
-A lightweight text-to-speech (TTS) application designed to run efficiently on CPUs.
-Forget about the hassle of using GPUs and web APIs serving TTS models. With Kyutai's Pocket TTS, generating audio is just a pip install and a function call away.
+A lightweight text-to-speech (TTS) application optimized for GPU inference with Flash Attention.
 
-Supports Python 3.10, 3.11, 3.12, 3.13 and 3.14. Requires PyTorch 2.5+. Does not require the gpu version of PyTorch.
+This is a fork of [Kyutai's Pocket TTS](https://github.com/kyutai-labs/pocket-tts) focused on GPU acceleration and performance optimization.
 
-[🔊 Demo](https://kyutai.org/pocket-tts) | 
-[🐱‍💻GitHub Repository](https://github.com/kyutai-labs/pocket-tts) | 
-[🤗 Hugging Face Model Card](https://huggingface.co/kyutai/pocket-tts) | 
+Supports Python 3.10, 3.11, 3.12, 3.13 and 3.14. Requires PyTorch 2.5+ with CUDA and a CUDA-capable GPU.
+
+[🔊 Demo](https://kyutai.org/pocket-tts) |
+[🐱‍💻 Upstream Repository](https://github.com/kyutai-labs/pocket-tts) |
+[🤗 Hugging Face Model Card](https://huggingface.co/kyutai/pocket-tts) |
 [⚙️ Tech report](https://kyutai.org/blog/2026-01-13-pocket-tts) |
-[📄 Paper](https://arxiv.org/abs/2509.06926) | 
-[📚 Documentation](https://kyutai-labs.github.io/pocket-tts/)
+[📄 Paper](https://arxiv.org/abs/2509.06926)
 
 
 ## Main takeaways
-* Runs on CPU
+* GPU-accelerated with Flash Attention
 * Small model size, 100M parameters
 * Audio streaming
-* Low latency, ~200ms to get the first audio chunk
-* Faster than real-time, ~6x real-time on a CPU of MacBook Air M4
-* Uses only 2 CPU cores
+* Low latency
+* Optional INT8 quantization for reduced memory
 * Python API and CLI
 * Voice cloning
 * English only at the moment
 * Can handle infinitely long text inputs
-* [Can run on client-side in the browser](#in-browser-implementations)
 
 More languages are planned: See our [official announcement](https://github.com/kyutai-labs/pocket-tts/issues/118)
 
@@ -89,12 +87,24 @@ Processing an audio file (e.g., a .wav or .mp3) for voice cloning is relatively 
 
 You can try out the Python library on Colab [here](https://colab.research.google.com/github/kyutai-labs/pocket-tts/blob/main/docs/pocket-tts-example.ipynb).
 
-Install the package with
+### Installation
+
+This fork requires a CUDA-capable GPU and installs PyTorch with CUDA 12.8 and Flash Attention.
+
 ```bash
-pip install pocket-tts
-# or
-uv add pocket-tts
+# Clone and install
+git clone https://github.com/jspaulsen/pocket-tts.git
+cd pocket-tts
+uv sync
+
+# With INT8 quantization support (recommended)
+uv sync --extra quantize
+
+# With dev dependencies
+uv sync --extra quantize --group dev
 ```
+
+Note: Building `flash-attn` compiles CUDA kernels and takes 5-10 minutes on first install.
 
 You can use this package as a simple Python library to generate audio from text.
 ```python
@@ -139,13 +149,9 @@ You can check out the [Python API documentation](https://kyutai-labs.github.io/p
 
 ## Unsupported features
 
-At the moment, we do not support (but would love pull requests adding):
+At the moment, we do not support:
 
-- [Adding silence in the text input to generate pauses.](https://github.com/kyutai-labs/pocket-tts/issues/6)
-- [Quantization to run the computation in int8.](https://github.com/kyutai-labs/pocket-tts/issues/7)
-
-We tried running this TTS model on the GPU but did not observe a speedup compared to CPU execution,
-notably because we use a batch size of 1 and a very small model.
+- Adding silence in the text input to generate pauses
 
 ## Development and local setup
 
