@@ -235,7 +235,7 @@ def generate(
     output_path: Annotated[
         str, typer.Option(help="Output path for generated audio")
     ] = "./tts_output.wav",
-    device: Annotated[str, typer.Option(help="Device to use")] = "cpu",
+    device: Annotated[str, typer.Option(help="Device to use")] = "cuda",
     max_tokens: Annotated[
         int, typer.Option(help="Maximum number of tokens per chunk.")
     ] = MAX_TOKEN_PER_CHUNK,
